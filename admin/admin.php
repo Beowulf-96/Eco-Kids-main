@@ -75,6 +75,7 @@
                     $sql = $this->con->conectar()->prepare("UPDATE admin SET nome = :nome, email = :email WHERE id = :id");
                     $sql->bindValue(":nome", $nome);
                     $sql->bindValue(":email", $email);
+                    $sql->bindValue(":id", $id);
                     $sql->execute();
                     return TRUE;
                 } catch(PDOException $e) {
