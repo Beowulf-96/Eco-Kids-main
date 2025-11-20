@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 include 'header.php';
 require __DIR__ . '/admin/conexao.php';
 
@@ -21,3 +22,14 @@ $jogos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </li>
     <?php endforeach; ?>
 </ul>
+=======
+    include 'header.php';
+?>
+        <h3>Under construction....</h3>
+        <div>
+            <iframe>
+            </iframe>
+        </div>
+    </body>
+    </html>
+>>>>>>> 37c8ea3e6682bf5fb7cbc2f6c840f46807335c83
