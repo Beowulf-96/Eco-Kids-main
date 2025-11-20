@@ -10,12 +10,10 @@
     </head>
     <body>
     <header>
-        <h1><div class="logo3"><img src="/ecokids/Eco-Kids-main/img/logo3.png" alt="Logomarca"></div>EcoAdmin</h1>
+        <h1><div class="logo3"><img src="logo3.png" alt="Logomarca"></div>EcoAdmin</h1>
     </header>
         <ul>
             <li><a href="dashboard.php">Home</a></li>
-            <li><a href="adicionar_video.php">Vídeos</a></li>
-            <li><a href="adicionar_jogo.php">Games</a> </li>
-            <li><a href="adicionar_leitura.php">Leitura</a></li>
-            <li><a href="sobre.php">Sobre</a></li>
+            <li><a href="conteudo.php">Conteúdos</a></li>
+            <li><a href="crud.php">CRUD</a> </li>
         </ul>
