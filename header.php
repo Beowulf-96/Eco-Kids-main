@@ -6,6 +6,10 @@
         <link rel="stylesheet" href="styles.css">
         <title>EcoKids</title>
         <link rel="icon" href="img/logo3.png" type="image/x-icon">
+<<<<<<< HEAD
+=======
+        <?php?>
+>>>>>>> 5bdcf527bfa5a0b39f0e2502c3369f05925c07ac
     </head>
     <body>
     <header>

@@ -1,7 +1,15 @@
 <?php
     include 'header.php';
 ?>
+<<<<<<< HEAD
         <h3>CEO <a href="http://localhost:8000/admin/dashboard.php" class="h3_button">Administrador</a></h3>
+=======
+<<<<<<< HEAD
+        <h3>CEO <a href="http://localhost:8000/admin/dashboard.php" class="h3_button">Administrador</a></h3>
+=======
+        <h3>CEO <a href="admin.php" class="h3_button">Administrador</a></h3>
+>>>>>>> 37c8ea3e6682bf5fb7cbc2f6c840f46807335c83
+>>>>>>> 5bdcf527bfa5a0b39f0e2502c3369f05925c07ac
         <div class="rapha img">
         <img src="img/rapha.jpg" alt="Raphael">
             <div class="rapha">
