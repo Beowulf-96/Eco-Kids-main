@@ -14,6 +14,6 @@
     </header>
         <ul>
             <li><a href="dashboard.php">Home</a></li>
-            <li><a href="gerenciar.php">Conteúdos</a></li>
+            <li><a href="gerenciar_conteudo.php">Conteúdos</a></li>
             <li><a href="crud.php">CRUD</a> </li>
         </ul>

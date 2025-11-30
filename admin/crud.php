@@ -7,7 +7,7 @@
     $admin = new Administrador();
 ?>
 
-<h1> Gestão de administradores </h1>
+<h3> Gestão de administradores </h3>
 <button><a href="adicionar_admin.php">Adicionar</a></button>
 
 <table border="2" width="100%">

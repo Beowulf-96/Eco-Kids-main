@@ -26,7 +26,6 @@ foreach ($videos as $v) {
     <p>Nenhum vídeo disponível.</p>
 <?php else: ?>
     
-    <!-- VÍDEO NO TOPO -->
     <?php if ($videoAtual): ?>
     <div style="margin-bottom: 40px; padding: 20px; border: 2px solid #007bff; background: #f0f8ff;">
         <h2><?= $videoAtual['titulo'] ?></h2>
@@ -42,7 +41,7 @@ foreach ($videos as $v) {
     </div>
     <?php endif; ?>
     
-    <!-- LISTA DE VÍDEOS -->
+    
     <h3>Todos os vídeos:</h3>
     <div>
         <?php foreach ($videos as $video): ?>

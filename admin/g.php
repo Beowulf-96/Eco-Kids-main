@@ -7,106 +7,84 @@ require 'conexao.php';
 $conexao = new Conexao();
 $conn = $conexao->conectar();
 
-// ADICIONAR
-if (isset($_POST['adicionar'])) {
+$id = $_GET['id'];
+
+// ATUALIZAR
+if (isset($_POST['atualizar'])) {
     $titulo = $_POST['titulo'];
     $tipo = $_POST['tipo'];
     $descricao = $_POST['descricao'];
     
-    // Upload do arquivo
-    $pasta = "uploads/";
-    $nomeArquivo = time() . "_" . $_FILES['arquivo']['name'];
-    $caminho = $pasta . $nomeArquivo;
-    
-    move_uploaded_file($_FILES['arquivo']['tmp_name'], $caminho);
-    
-    // Salva no banco
-    $stmt = $conn->prepare("INSERT INTO conteudo (titulo, tipo, descricao, caminho) VALUES (:titulo, :tipo, :descricao, :caminho)");
-    $stmt->execute([':titulo' => $titulo, ':tipo' => $tipo, ':descricao' => $descricao, ':caminho' => $caminho]);
-    
-    echo "<p>Conteúdo adicionado!</p>";
-}
-
-// EXCLUIR
-if (isset($_GET['excluir'])) {
-    $id = $_GET['excluir'];
-    
-    // Busca o caminho do arquivo
-    $stmt = $conn->prepare("SELECT caminho FROM conteudo WHERE id = :id");
-    $stmt->execute([':id' => $id]);
-    $arquivo = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    // Deleta o arquivo
-    if ($arquivo && file_exists($arquivo['caminho'])) {
-        unlink($arquivo['caminho']);
+    // Verifica se enviou novo arquivo
+    if (!empty($_FILES['arquivo']['name'])) {
+        // Busca arquivo antigo para deletar
+        $stmt = $conn->prepare("SELECT caminho FROM conteudo WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $antigo = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Deleta arquivo antigo
+        if ($antigo && file_exists($antigo['caminho'])) {
+            unlink($antigo['caminho']);
+        }
+        
+        // Upload do novo arquivo
+        $pasta = "uploads/";
+        $nomeArquivo = time() . "_" . $_FILES['arquivo']['name'];
+        $caminho = $pasta . $nomeArquivo;
+        move_uploaded_file($_FILES['arquivo']['tmp_name'], $caminho);
+        
+        // Atualiza com novo arquivo
+        $stmt = $conn->prepare("UPDATE conteudo SET titulo = :titulo, tipo = :tipo, descricao = :descricao, caminho = :caminho WHERE id = :id");
+        $stmt->execute([':titulo' => $titulo, ':tipo' => $tipo, ':descricao' => $descricao, ':caminho' => $caminho, ':id' => $id]);
+    } else {
+        // Atualiza sem mudar o arquivo
+        $stmt = $conn->prepare("UPDATE conteudo SET titulo = :titulo, tipo = :tipo, descricao = :descricao WHERE id = :id");
+        $stmt->execute([':titulo' => $titulo, ':tipo' => $tipo, ':descricao' => $descricao, ':id' => $id]);
     }
-    //abc
-    // Deleta do banco
-    $stmt = $conn->prepare("DELETE FROM conteudo WHERE id = :id");
-    $stmt->execute([':id' => $id]);
     
-    echo "<p> Conteúdo excluído!</p>";
+    echo "<p>Conteúdo atualizado!</p>";
+    echo "<a href='gerenciar_conteudo.php'>Voltar</a>";
+    exit;
 }
 
-// LISTAR
-$stmt = $conn->query("SELECT * FROM conteudo ORDER BY id DESC");
-$conteudos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// BUSCAR dados atuais
+$stmt = $conn->prepare("SELECT * FROM conteudo WHERE id = :id");
+$stmt->execute([':id' => $id]);
+$conteudo = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
-<h1>Gerenciar Conteúdos</h1>
+<h1>Editar Conteúdo</h1>
 
-<h2>Adicionar Novo</h2>
 <form method="POST" enctype="multipart/form-data">
     <p>
         <label>Título:</label><br>
-        <input type="text" name="titulo" required>
+        <input type="text" name="titulo" value="<?= $conteudo['titulo'] ?>" required>
     </p>
     
     <p>
         <label>Tipo:</label><br>
         <select name="tipo" required>
-            <option value="jogo">Jogo</option>
-            <option value="video">Vídeo</option>
-            <option value="leitura">Leitura</option>
+            <option value="jogo" <?= $conteudo['tipo'] == 'jogo' ? 'selected' : '' ?>>Jogo</option>
+            <option value="video" <?= $conteudo['tipo'] == 'video' ? 'selected' : '' ?>>Vídeo</option>
+            <option value="leitura" <?= $conteudo['tipo'] == 'leitura' ? 'selected' : '' ?>>Leitura</option>
         </select>
     </p>
     
     <p>
         <label>Descrição:</label><br>
-        <textarea name="descricao" rows="3"></textarea>
+        <textarea name="descricao" rows="3"><?= $conteudo['descricao'] ?></textarea>
     </p>
     
     <p>
-        <label>Arquivo:</label><br>
-        <input type="file" name="arquivo" required>
+        <label>Arquivo atual:</label><br>
+        <strong><?= $conteudo['caminho'] ?></strong>
     </p>
     
-    <button type="submit" name="adicionar">Adicionar</button>
+    <p>
+        <label>Trocar arquivo (deixe vazio para manter o atual):</label><br>
+        <input type="file" name="arquivo">
+    </p>
+    
+    <button type="submit" name="atualizar">Atualizar</button>
+    <a href="gerenciar_conteudo.php">Cancelar</a>
 </form>
-
-<hr>
-
-<h2>Lista de Conteúdos</h2>
-<table border="1" cellpadding="10">
-    <tr>
-        <th>ID</th>
-        <th>Título</th>
-        <th>Tipo</th>
-        <th>Arquivo</th>
-        <th>Ações</th>
-    </tr>
-    <?php foreach ($conteudos as $item): ?>
-    <tr>
-        <td><?= $item['id'] ?></td>
-        <td><?= $item['titulo'] ?></td>
-        <td><?= $item['tipo'] ?></td>
-        <td><?= $item['caminho'] ?></td>
-        <td>
-            <a href="editar.php?id=<?= $item['id'] ?>">Editar</a> | 
-            <a href="?excluir=<?= $item['id'] ?>" onclick="return confirm('Excluir?')">Excluir</a>
-        </td>
-    </tr>
-    <?php endforeach; ?>
-
-    <a href="dashboard.php">Sair</a>
-</table>
