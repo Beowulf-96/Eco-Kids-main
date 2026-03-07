@@ -49,7 +49,10 @@ $conteudos = $conteudo->listar();
         <option value="leitura" <?= ($editando['tipo'] ?? '') == 'leitura' ? 'selected' : '' ?>>Leitura</option>
     </select><br><br>
     
-    <textarea name="descricao" rows="3" placeholder="Descrição"><?= $editando['descricao'] ?? '' ?></textarea><br><br>
+    <div id="campo-descricao" style="display:none;">
+        <label>Texto:</label><br>
+        <textarea name="descricao" rows="3" placeholder="Descrição"><?= $editando['descricao'] ?? '' ?></textarea><br><br>
+    </div>
     
     <div id="campo-arquivo">
         <label>Arquivo:</label><br>
@@ -76,6 +79,7 @@ $conteudos = $conteudo->listar();
 function toggleCampos() {
     const tipo = document.getElementById('tipo').value;
     document.getElementById('campo-arquivo').style.display = tipo === 'leitura' ? 'none' : 'block';
+    document.getElementById('campo-descricao').style.display = tipo === 'leitura' ? 'none' : 'block';
     document.getElementById('campo-texto').style.display = tipo === 'leitura' ? 'block' : 'none';
     document.getElementById('campo-imagem').style.display = tipo === 'video' ? 'none' : 'block';
 }

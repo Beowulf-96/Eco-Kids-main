@@ -33,10 +33,9 @@ $videoAtual = array_filter($videos, fn($v) => $v['id'] == $videoId)[0] ?? null;
                 <source src="admin/<?= $video['caminho'] ?>" type="video/mp4">
             </video>
         </a>
-        <br>
-        <p><?= $video['descricao'] ?></p>
-            
+    <p><?= $video['descricao'] ?></p>    
     <?php endforeach; ?>
+
 </div>
 
 <script>

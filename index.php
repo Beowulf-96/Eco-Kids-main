@@ -1,50 +1,50 @@
 <?php
     include 'header.php';
+    require_once __DIR__ . '/admin/conexao.php';
+
+    $con = new Conexao();
+    $conn = $con->conectar();
+
+    $leitura = $conn->query("SELECT id, titulo, texto, imagem FROM conteudo WHERE tipo = 'leitura' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $primeiraLeitura = $leitura[0] ?? null;
+
+    $videos = $conn->query("SELECT * FROM conteudo WHERE tipo = 'video' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $primeiroVideo = $videos[0] ?? null;
 ?>
 
-        <div class="colunas">
-            <div class="coluna">
-                <h2>Missão</h2>
-                <p>Educar e inspirar crianças e protegerem o meio ambiente através de plataformas interativas sobre a natureza, animais e a importância da água. </p>
-            </div>
-            <div class="coluna">
-                <h2>Visão</h2>
-                <p>Ser a principal referência em educação ambiental para crianças, formando futuras gerações sustentáveis. </p>
-            </div>
-            <div class="coluna">
-                <h2>Valores</h2>
-                <p>Sustentabilidade</p>
-                <p>Qualidade educacional</p>
-                <p>Inovação</p>
-            </div>
-            
-        </div>
-        <div class="Log">
-            <h3>Logomarca:</h3>
-        <figure>
-            <img src="img/logo3.png" alt="Logomarca">
-        </figure>
-        </div>
-        <div class="objetivos">
-            <h3>Objetivos:</h3>
-            <p>
-             Em um primeiro momento tratava-se de uma rede social voltada a conscientização ambiental, que, infelizmente não foi bem aceita por conta de muitas lacunas com relação as postagens. Nesse sentido, estamos trabalhando arduamente nessa nova plataforma para conscientização infantil por meio de um site de jogos, vídeos tutoriais e conteúdo de leitura. De tal maneira, para o futuro, esperamos ampliar essa plataforma para abranger também o público jovem.
-            </p>
-        </div>
-        <br>
-        <br>
-        <div class="Segmento">
-            <h3>Segmento:</h3>
-            <p>
-                O segmento EdTech (Educational Technology) refere-se à aplicação de tecnologias inovadoras para transformar e melhorar os processos de ensino e aprendizagem. Ele abrange desde plataformas de ensino à distância e aplicativos de aprendizado até soluções baseadas em inteligência artificial, realidade aumentada e virtual, entre outras.
+<h3>Vídeos</h3>
 
-Com o objetivo de tornar a educação mais acessível, personalizada e eficiente, as EdTechs atendem a diversas demandas, desde a educação básica até treinamentos corporativos. Elas promovem metodologias ativas, como o aprendizado gamificado e adaptativo, e oferecem ferramentas que facilitam o engajamento de alunos e professores.
+<?php if (empty($videos)): ?>
+    <p>Nenhum vídeo disponível.</p>
+<?php else: ?>
+    
+<div class="video-principal">
+    <h2 id="titulo-principal"><?= $primeiroVideo['titulo'] ?></h2>
+    <video id="video-principal" width="100%" style="max-width: 800px; aspect-ratio: 16/9; display: block; margin: 0 auto;" controls autoplay>
+        <source src="admin/<?= $primeiroVideo['caminho'] ?>" type="video/mp4">
+    </video>
+</div>
 
-Nos últimos anos, o setor tem crescido rapidamente, impulsionado pela digitalização global e pela necessidade de novas formas de aprendizado flexíveis e híbridas. Por isso, as EdTechs têm desempenhado um papel fundamental na democratização da educação e na capacitação para o futuro do trabalho.
-            </p>
+<?php endif; ?>
+
+<h3>Leitura</h3>
+<?php if(empty($leitura)): ?>
+    <p>Nenhum texto encontrado!</p>
+<?php else: ?>
+    <?php foreach($leitura as $item): ?>
+        <div>
+            <h2><?= $item['titulo'] ?></h2>
+
+            <?php if(!empty($item['imagem'])): ?>
+                <img src="admin/<?= $item['imagem']?>" alt="<?= $item['titulo']?>" class="imagem-leitura">
+            <?php endif; ?>
+
+            <p><?= nl2br($item['texto'])?></p>
+            <hr>
         </div>
-        <?php
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<?php
     include 'footer.php';
 ?>
-    </body>
-</html>
