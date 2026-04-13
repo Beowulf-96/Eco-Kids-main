@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 include 'header.php';
 require_once 'Auth.php';
 $auth = new Auth();
@@ -66,7 +66,7 @@ $conteudos = $conteudo->listar();
     
     <div id="campo-imagem">
         <label>Imagem:</label><br>
-        <input type="file" name="imagem" accept="image/*"><br><br>
+        <input type="file" name="imagem" accept='image'> <?= $editando['texto'] ?? '' ?> <br><br>
     </div>
     
     <button name="<?= $editando ? 'editar' : 'adicionar' ?>"><?= $editando ? 'Salvar' : 'Adicionar' ?></button>
@@ -81,6 +81,7 @@ function toggleCampos() {
     document.getElementById('campo-arquivo').style.display = tipo === 'leitura' ? 'none' : 'block';
     document.getElementById('campo-descricao').style.display = tipo === 'leitura' ? 'none' : 'block';
     document.getElementById('campo-texto').style.display = tipo === 'leitura' ? 'block' : 'none';
+    document.getElementById('campo-imagem').style.display = tipo === 'leitura' ? 'block' : 'none';
     document.getElementById('campo-imagem').style.display = tipo === 'video' ? 'none' : 'block';
 }
 toggleCampos();
@@ -103,4 +104,4 @@ toggleCampos();
     <?php endforeach; ?>
 </table>
 
-<a href="dashboard.php">Voltar</a>
+<a href="dashboard.php">Voltar</a> -->

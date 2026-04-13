@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capivara Recicla!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #e8e8e8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Press Start 2P', monospace;
+  }
+  #game-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  #hud {
+    display: flex;
+    align-items: center;
+    color: #222;
+    font-size: 9px;
+    background: #fff;
+    border: 2px solid #222;
+    width: 800px;
+    justify-content: space-between;
+  }
+  #hud > div {
+    padding: 8px 16px;
+    border-right: 2px solid #222;
+  }
+  #hud > div:last-child { border-right: none; }
+  #hud span { color: #e63; }
+  canvas {
+    display: block;
+    border: 2px solid #222;
+    image-rendering: pixelated;
+    background: #fff;
+    cursor: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 37px;
+    left: 0;
+    width: 800px;
+    height: 500px;
+    background: rgba(255,255,255,0.97);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    border: 2px solid #222;
+  }
+  #overlay h1 {
+    font-size: 18px;
+    color: #222;
+    text-align: center;
+    line-height: 1.8;
+  }
+  #overlay p {
+    font-size: 7px;
+    color: #555;
+    text-align: center;
+    line-height: 2.4;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+  }
+  .legend-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 6px;
+    color: #444;
+  }
+  .legend-box {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #222;
+  }
+  #btn-start {
+    padding: 12px 32px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    background: #222;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+  #btn-start:hover { background: #e63; }
+  #msg-feedback {
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    transition: opacity 0.4s;
+    opacity: 0;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+  <div id="hud">
+    <div>PONTOS: <span id="score">0</span></div>
+    <div>VIDAS: <span id="lives">♥ ♥ ♥</span></div>
+    <div>NÍVEL: <span id="level">1</span></div>
+    <div>TEMPO: <span id="timer">60</span>s</div>
+  </div>
+  <canvas id="gameCanvas" width="800" height="500"></canvas>
+  <div id="msg-feedback"></div>
+
+  <div id="overlay">
+    <h1>🦫 CAPIVARA RECICLA!</h1>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-box" style="background:#4caf50;"></div>ORGÂNICO
+      </div>
+      <div class="legend-item">
+        <div class="legend-box" style="background:#2196f3;"></div>PAPEL
+      </div>
+      <div class="legend-item">
+        <div class="legend-box" style="background:#ff9800;"></div>PLÁSTICO
+      </div>
+      <div class="legend-item">
+        <div class="legend-box" style="background:#9c27b0;"></div>VIDRO
+      </div>
+    </div>
+    <p>
+      ← ↑ → ↓ &nbsp; MOVER &nbsp;|&nbsp; ESPAÇO &nbsp; PEGAR / SOLTAR<br>
+      Leve cada lixo até a lata da cor certa!<br>
+      Errar a lata = perde uma vida.
+    </p>
+    <button id="btn-start" onclick="startGame()">▶ JOGAR</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx    = canvas.getContext('2d');
+const W = 800, H = 500;
+
+// ─── Tipos ────────────────────────────────────────────────────────
+const TYPES = [
+  { id:'organico', label:'ORG', color:'#4caf50', border:'#2e7d32' },
+  { id:'papel',    label:'PAP', color:'#2196f3', border:'#0d47a1' },
+  { id:'plastico', label:'PLA', color:'#ff9800', border:'#e65100' },
+  { id:'vidro',    label:'VID', color:'#9c27b0', border:'#4a148c' },
+];
+
+// ─── Latas nos 4 cantos ───────────────────────────────────────────
+const BIN_SIZE = 52;
+const BINS = [
+  { x:70,    y:70,    type:TYPES[0] },
+  { x:W-70,  y:70,    type:TYPES[1] },
+  { x:70,    y:H-70,  type:TYPES[2] },
+  { x:W-70,  y:H-70,  type:TYPES[3] },
+];
+
+// ─── Capivara ─────────────────────────────────────────────────────
+const CAP = 40; // tamanho do sprite (quadrado)
+const cap = { x:W/2, y:H/2, w:CAP, h:CAP, speed:3, carrying:null };
+// Última direção de movimento (para sprite futura)
+let capDir = { x:0, y:1 };
+
+// ─── Lixos ────────────────────────────────────────────────────────
+const WS = 26;
+let wastes    = [];
+let particles = [];
+
+// ─── Estado ───────────────────────────────────────────────────────
+let state='idle', score=0, lives=3, level=1, timeLeft=60;
+let timerInt=null, spawnInt=null;
+
+// ─── Input ────────────────────────────────────────────────────────
+const keys = {};
+window.addEventListener('keydown', e=>{
+  keys[e.code] = true;
+  if(e.code==='Space' && state==='playing'){ e.preventDefault(); interact(); }
+});
+window.addEventListener('keyup', e=>{ keys[e.code]=false; });
+
+// ─── Utils ────────────────────────────────────────────────────────
+const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const dst = (ax,ay,bx,by) => Math.hypot(ax-bx,ay-by);
+
+function closestBin(){
+  return BINS.reduce((best,b)=>{
+    const d=dst(cap.x,cap.y,b.x,b.y);
+    return d<best.d ? {bin:b,d} : best;
+  },{bin:BINS[0],d:9999});
+}
+function closestWaste(){
+  if(!wastes.length) return {waste:null,d:9999};
+  return wastes.reduce((best,w)=>{
+    const d=dst(cap.x,cap.y,w.x,w.y);
+    return d<best.d ? {waste:w,d} : best;
+  },{waste:wastes[0],d:9999});
+}
+
+// ─── Spawn ────────────────────────────────────────────────────────
+function spawnWaste(){
+  if(wastes.length >= 3+level) return;
+  // Evita cantos (onde estão as latas)
+  let x, y, attempts=0;
+  do {
+    x = rnd(80, W-80);
+    y = rnd(80, H-80);
+    attempts++;
+  } while(attempts<20 && BINS.some(b=>dst(x,y,b.x,b.y)<90));
+  wastes.push({ x, y, type:TYPES[rnd(0,3)], w:WS, h:WS, phase:Math.random()*Math.PI*2 });
+}
+
+// ─── Interação ────────────────────────────────────────────────────
+function interact(){
+  if(cap.carrying) dropWaste();
+  else             pickWaste();
+}
+
+function pickWaste(){
+  const {waste,d} = closestWaste();
+  if(waste && d<52){ cap.carrying=waste; wastes=wastes.filter(w=>w!==waste); }
+}
+
+function dropWaste(){
+  const waste=cap.carrying;
+  const {bin,d}=closestBin();
+  if(d < 58){
+    if(waste.type.id===bin.type.id){
+      score += 10*level;
+      burst(bin.x, bin.y, waste.type.color, 18);
+      showFeedback('✓ +'+10*level, bin.x, bin.y, '#2e7d32');
+    } else {
+      lives--;
+      burst(bin.x, bin.y, '#e53935', 12);
+      showFeedback('✗ ERROU!', bin.x, bin.y, '#c62828');
+      if(lives<=0){ cap.carrying=null; endGame(false); return; }
+    }
+    cap.carrying=null; updateHUD();
+  } else {
+    // Larga perto da capivara
+    waste.x=cap.x+46; waste.y=cap.y;
+    wastes.push(waste); cap.carrying=null;
+  }
+}
+
+// ─── Partículas ───────────────────────────────────────────────────
+function burst(x,y,color,n){
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, s=Math.random()*3+1;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,color,size:rnd(3,6),life:1});
+  }
+}
+
+// ─── HUD ──────────────────────────────────────────────────────────
+function updateHUD(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('level').textContent=level;
+  document.getElementById('timer').textContent=timeLeft;
+  let h=''; for(let i=0;i<3;i++) h+=(i<lives?'♥ ':'♡ ');
+  document.getElementById('lives').textContent=h.trim();
+}
+
+// ─── Feedback ─────────────────────────────────────────────────────
+const fbEl=document.getElementById('msg-feedback');
+let fbTO=null;
+function showFeedback(txt,cx,cy,color){
+  fbEl.textContent=txt; fbEl.style.color=color;
+  fbEl.style.left=(cx-40)+'px';
+  fbEl.style.top =(cy+37-36)+'px';
+  fbEl.style.opacity='1';
+  if(fbTO) clearTimeout(fbTO);
+  fbTO=setTimeout(()=>fbEl.style.opacity='0',900);
+}
+
+// ─── Game flow ────────────────────────────────────────────────────
+function startGame(){
+  document.getElementById('overlay').style.display='none';
+  state='playing'; score=0; lives=3; level=1; timeLeft=60;
+  wastes=[]; particles=[]; cap.x=W/2; cap.y=H/2; cap.carrying=null;
+  updateHUD();
+
+  timerInt=setInterval(()=>{
+    if(state!=='playing') return;
+    timeLeft--;
+    if(timeLeft>0 && timeLeft%20===0) level++;
+    updateHUD();
+    if(timeLeft<=0) endGame(true);
+  },1000);
+
+  clearInterval(spawnInt);
+  spawnInt=setInterval(()=>{ if(state==='playing') spawnWaste(); },1400);
+
+  spawnWaste(); spawnWaste();
+}
+
+function endGame(win){
+  state=win?'win':'over';
+  clearInterval(timerInt); clearInterval(spawnInt);
+  const ov=document.getElementById('overlay');
+  const bs=`padding:12px 28px;font-family:'Press Start 2P',monospace;font-size:10px;background:#222;color:#fff;border:none;cursor:pointer;margin-top:8px;`;
+  ov.innerHTML=win
+    ?`<h1>🎉 VOCÊ VENCEU!</h1><p>Planeta salvo!<br><br>Pontuação: <span style="color:#e63">${score}</span></p><button onclick="location.reload()" style="${bs}">▶ JOGAR DE NOVO</button>`
+    :`<h1>💀 GAME OVER</h1><p>Sem mais vidas...<br><br>Pontuação: <span style="color:#e63">${score}</span></p><button onclick="location.reload()" style="${bs}">▶ TENTAR NOVAMENTE</button>`;
+  ov.style.display='flex';
+}
+
+// ─── Desenho ──────────────────────────────────────────────────────
+
+// FUNDO — fundo branco simples com grade fina de tiles
+// Para adicionar pixel art: substitua por ctx.drawImage(bgTilemap, 0, 0)
+function drawBg(){
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#f0f0f0';
+  ctx.lineWidth=1;
+  const T=32;
+  for(let x=0;x<=W;x+=T){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+  for(let y=0;y<=H;y+=T){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
+}
+
+// LATAS — quadrado colorido (top-down)
+// Para pixel art: ctx.drawImage(binSprites[i], bx-BIN_SIZE/2, by-BIN_SIZE/2, BIN_SIZE, BIN_SIZE)
+function drawBins(){
+  const S=BIN_SIZE;
+  BINS.forEach((b,i)=>{
+    const bx=b.x-S/2, by=b.y-S/2;
+
+    // Sombra
+    ctx.fillStyle='rgba(0,0,0,0.10)';
+    ctx.fillRect(bx+4,by+4,S,S);
+
+    // Corpo
+    ctx.fillStyle=b.type.color;
+    ctx.fillRect(bx,by,S,S);
+
+    // Borda
+    ctx.strokeStyle=b.type.border;
+    ctx.lineWidth=3;
+    ctx.strokeRect(bx,by,S,S);
+
+    // Abertura (círculo central — lata vista de cima)
+    ctx.fillStyle=b.type.border;
+    ctx.beginPath(); ctx.arc(b.x,b.y,S*0.22,0,Math.PI*2); ctx.fill();
+
+    // Label
+    ctx.fillStyle='#fff';
+    ctx.font='bold 7px "Press Start 2P"';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(b.type.label, b.x, b.y+S*0.3);
+  });
+  ctx.textBaseline='alphabetic';
+}
+
+// LIXOS — quadrado colorido
+// Para pixel art: ctx.drawImage(wasteSprites[w.type.id], w.x-WS/2, w.y-WS/2, WS, WS)
+function drawWastes(){
+  const t=Date.now();
+  wastes.forEach(w=>{
+    const bob=Math.sin(t*0.004+w.phase)*1.5;
+    const x=w.x-WS/2, y=w.y-WS/2+bob;
+
+    ctx.fillStyle='rgba(0,0,0,0.13)';
+    ctx.fillRect(x+3,y+3,WS,WS);
+
+    ctx.fillStyle=w.type.color;
+    ctx.fillRect(x,y,WS,WS);
+
+    ctx.strokeStyle=w.type.border;
+    ctx.lineWidth=2;
+    ctx.strokeRect(x,y,WS,WS);
+
+    // Marcador branco central
+    ctx.fillStyle='rgba(255,255,255,0.55)';
+    ctx.fillRect(w.x-5,w.y-5+bob,10,10);
+  });
+}
+
+// CAPIVARA — quadrado marrom com seta de direção
+// Para pixel art: ctx.drawImage(capSprites[dirName], cap.x-CAP/2, cap.y-CAP/2, CAP, CAP)
+function drawCap(){
+  const x=cap.x-CAP/2, y=cap.y-CAP/2;
+
+  // Sombra
+  ctx.fillStyle='rgba(0,0,0,0.15)';
+  ctx.fillRect(x+4,y+4,CAP,CAP);
+
+  // Corpo
+  ctx.fillStyle='#a07040';
+  ctx.fillRect(x,y,CAP,CAP);
+
+  // Borda
+  ctx.strokeStyle='#6b4a20';
+  ctx.lineWidth=2;
+  ctx.strokeRect(x,y,CAP,CAP);
+
+  // Seta de direção (indica para onde a capivara olha)
+  // Para pixel art: remova este bloco e use o sprite correto
+  const ndx=capDir.x, ndy=capDir.y;
+  const len=Math.hypot(ndx,ndy)||1;
+  const nx=ndx/len, ny=ndy/len;
+  const cx2=cap.x+nx*(CAP*0.25), cy2=cap.y+ny*(CAP*0.25);
+  const px=-ny*5, py=nx*5;
+  ctx.fillStyle='rgba(255,255,255,0.85)';
+  ctx.beginPath();
+  ctx.moveTo(cx2+nx*9,    cy2+ny*9);
+  ctx.lineTo(cx2+px-nx*4, cy2+py-ny*4);
+  ctx.lineTo(cx2-px-nx*4, cy2-py-ny*4);
+  ctx.closePath();
+  ctx.fill();
+
+  // Lixo carregado — mostrado acima da capivara
+  if(cap.carrying){
+    const wt=cap.carrying.type;
+    const ws2=22;
+    const wx=cap.x-ws2/2, wy=cap.y-CAP/2-ws2-5;
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    ctx.fillRect(wx+3,wy+3,ws2,ws2);
+    ctx.fillStyle=wt.color;
+    ctx.fillRect(wx,wy,ws2,ws2);
+    ctx.strokeStyle=wt.border;
+    ctx.lineWidth=2;
+    ctx.strokeRect(wx,wy,ws2,ws2);
+  }
+}
+
+function drawParticles(){
+  particles.forEach(p=>{
+    ctx.globalAlpha=p.life;
+    ctx.fillStyle=p.color;
+    ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size);
+  });
+  ctx.globalAlpha=1;
+}
+
+// Linha tracejada para a lata certa quando carregando lixo
+function drawGuide(){
+  if(!cap.carrying) return;
+  const {bin}=closestBin();
+  ctx.save();
+  ctx.setLineDash([6,6]);
+  ctx.strokeStyle=cap.carrying.type.color;
+  ctx.globalAlpha=0.3;
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cap.x,cap.y); ctx.lineTo(bin.x,bin.y); ctx.stroke();
+  ctx.restore();
+}
+
+function drawHint(){
+  ctx.fillStyle='#bbb';
+  ctx.font='6px "Press Start 2P"';
+  ctx.textAlign='center';
+  ctx.fillText('← ↑ → ↓  MOVER   |   ESPAÇO  PEGAR / SOLTAR', W/2, H-10);
+}
+
+// ─── Update ───────────────────────────────────────────────────────
+function update(){
+  if(state!=='playing') return;
+
+  const spd=cap.speed+level*0.2;
+  let mx=0, my=0;
+  if(keys['ArrowLeft'] ||keys['KeyA']) mx-=spd;
+  if(keys['ArrowRight']||keys['KeyD']) mx+=spd;
+  if(keys['ArrowUp']   ||keys['KeyW']) my-=spd;
+  if(keys['ArrowDown'] ||keys['KeyS']) my+=spd;
+
+  // Normaliza diagonal
+  if(mx!==0&&my!==0){ mx*=0.707; my*=0.707; }
+
+  if(mx!==0||my!==0) capDir={x:mx,y:my};
+
+  cap.x=Math.max(CAP/2,Math.min(W-CAP/2,cap.x+mx));
+  cap.y=Math.max(CAP/2,Math.min(H-CAP/2,cap.y+my));
+
+  particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.08; p.life-=0.025; });
+  particles=particles.filter(p=>p.life>0);
+}
+
+// ─── Loop principal ───────────────────────────────────────────────
+function loop(){
+  ctx.clearRect(0,0,W,H);
+  drawBg();
+  drawGuide();
+  drawBins();
+  drawWastes();
+  drawCap();
+  drawParticles();
+  drawHint();
+  update();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>

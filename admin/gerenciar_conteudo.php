@@ -10,8 +10,16 @@ $conteudo = new Conteudo();
 // Processar ações
 if (isset($_POST['adicionar']) || isset($_POST['editar'])) {
     $tipo = $_POST['tipo'];
-    $caminho = $tipo != 'leitura' ? $conteudo->uploadArquivo($_FILES['arquivo']) : null;
-    $imagem = $tipo != 'video' && !empty($_FILES['imagem']['tmp_name']) ? $conteudo->uploadArquivo($_FILES['imagem']) : null;
+    if ($tipo == 'video') {
+        $caminho = $conteudo->uploadArquivo($_FILES['arquivo']);
+        $imagem = $conteudo->uploadArquivo($_FILES['imagem']);
+    }
+    else 
+    {
+        $caminho = $tipo != 'leitura' ? $conteudo->uploadArquivo($_FILES['arquivo']) : null;
+        $imagem = $tipo != 'video' && !empty($_FILES['imagem']['tmp_name']) ? $conteudo->uploadArquivo($_FILES['imagem']) : null;
+    }
+    
     $texto = $tipo == 'leitura' ? $_POST['texto'] : null;
     
     if (isset($_POST['adicionar'])) {
@@ -81,7 +89,7 @@ function toggleCampos() {
     document.getElementById('campo-arquivo').style.display = tipo === 'leitura' ? 'none' : 'block';
     document.getElementById('campo-descricao').style.display = tipo === 'leitura' ? 'none' : 'block';
     document.getElementById('campo-texto').style.display = tipo === 'leitura' ? 'block' : 'none';
-    document.getElementById('campo-imagem').style.display = tipo === 'video' ? 'none' : 'block';
+    document.getElementById('campo-imagem').style.display = tipo === 'jogo' ? 'none' : 'block';
 }
 toggleCampos();
 </script>
