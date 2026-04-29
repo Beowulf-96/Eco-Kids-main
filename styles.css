@@ -135,6 +135,7 @@ h3 {
   margin-top: 6vw;
   display: grid;
   place-items: center;
+  border-radius: 0.5vw;
 }
 
 .h3_button {
@@ -378,6 +379,56 @@ ul li a:hover {
 
 .more:hover {
   background-color: rgb(24, 163, 20);
+}
+
+.erro {
+  background-color: grey;
+  color: white;
+  padding: 0px;
+  border-radius: 5px;
+}
+
+.label {
+  color: white;
+  font-family: monospace;
+  font-size: 1.2vw;
+  border-radius: 0.5vw;
+}
+
+.input {
+  border-radius: 0.2vw;
+  border-color: #000;
+  height: 1.4vw;
+}
+
+.button {
+  background-color: white;
+  border-radius: 0.1vw;
+  color: rgb(21, 145, 16);
+  font-size: 1.1vw;
+  font-family: monospace;
+  text-decoration: none;
+  display: inline-block;
+  border: #000;
+  margin-left: 0.5vw;
+}
+
+.button:hover {
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+}
+
+.botoes {
+  display: flex;
+  gap: 10px;
+}
+
+.select {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: monospace;
 }
 
 footer {

@@ -49,37 +49,37 @@ $conteudos = $conteudo->listar();
         <input type="hidden" name="id" value="<?= $editando['id'] ?>">
     <?php endif; ?>
     
-    <input type="text" name="titulo" value="<?= $editando['titulo'] ?? '' ?>" placeholder="Título" required><br><br>
+    <input class="input" type="text" name="titulo" value="<?= $editando['titulo'] ?? '' ?>" placeholder="Título" required><br><br>
     
-    <select name="tipo" id="tipo" required onchange="toggleCampos()">
+    <select class="select" name="tipo" id="tipo" required onchange="toggleCampos()">
         <option value="jogo" <?= ($editando['tipo'] ?? '') == 'jogo' ? 'selected' : '' ?>>Jogo</option>
         <option value="video" <?= ($editando['tipo'] ?? '') == 'video' ? 'selected' : '' ?>>Vídeo</option>
         <option value="leitura" <?= ($editando['tipo'] ?? '') == 'leitura' ? 'selected' : '' ?>>Leitura</option>
     </select><br><br>
     
     <div id="campo-descricao" style="display:none;">
-        <label>Texto:</label><br>
+        <label class="label">Texto:</label><br>
         <textarea name="descricao" rows="3" placeholder="Descrição"><?= $editando['descricao'] ?? '' ?></textarea><br><br>
     </div>
     
     <div id="campo-arquivo">
-        <label>Arquivo:</label><br>
+        <label class="label" >Arquivo:</label><br>
         <input type="file" name="arquivo"><br><br>
     </div>
     
     <div id="campo-texto" style="display:none;">
-        <label>Texto:</label><br>
+        <label class="label">Texto:</label><br>
         <textarea name="texto" rows="10"><?= $editando['texto'] ?? '' ?></textarea><br><br>
     </div>
     
     <div id="campo-imagem">
-        <label>Imagem:</label><br>
+        <label class="label">Imagem:</label><br>
         <input type="file" name="imagem" accept="image/*"><br><br>
     </div>
     
-    <button name="<?= $editando ? 'editar' : 'adicionar' ?>"><?= $editando ? 'Salvar' : 'Adicionar' ?></button>
+    <button class="button" name="<?= $editando ? 'editar' : 'adicionar' ?>"><?= $editando ? 'Salvar' : 'Adicionar' ?></button>
     <?php if ($editando): ?>
-        <a href="gerenciar_conteudo.php"><button type="button">Cancelar</button></a>
+        <a href="gerenciar_conteudo.php"><button class="button" type="button">Cancelar</button></a>
     <?php endif; ?>
 </form>
 

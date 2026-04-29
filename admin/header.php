@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="../styles.css">
         <title>EcoKids</title>
         <link rel="icon" href="/ecokids/Eco-Kids-main/img/logo3.png" type="image/x-icon">
         <?php?>
@@ -13,7 +13,6 @@
         <h1><div class="logo3"><img src="logo3.png" alt="Logomarca"></div>EcoAdmin</h1>
     </header>
         <ul>
-            <li><a href="dashboard.php">Home</a></li>
             <li><a href="gerenciar_conteudo.php">Conteúdos</a></li>
             <li><a href="crud.php">CRUD</a> </li>
         </ul>
