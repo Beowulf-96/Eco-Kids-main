@@ -37,18 +37,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>    
 
         <div>
-            <label class="label">Email</label>
+            <label class="label">Email: </label>
             <input class="input" type="email" name="email" placeholder="Email" required>
         </div>
 
         <div>
-            <label class="label">Senha</label>
+            <label class="label">Senha: </label>
             <input class="input" type="password" name="senha" placeholder="Senha" required>
         </div>
 
         <div class="botoes">
-            <button class="button" type="submit">Entrar</button>
-            <button class="button" type="button" onclick="window.location.href='../index.php'">Voltar</button>
+            <button class="button-primary" type="submit">Entrar</button>
+            <button class="button-secondary" type="button" onclick="window.location.href='../index.php'">Voltar</button>
         </div>
 
     </div>

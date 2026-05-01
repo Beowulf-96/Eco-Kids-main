@@ -21,7 +21,7 @@
         </div>
         <div class="fundoWid">
             <div class="Log">
-                <h3>Logomarca: <a href="http://localhost:8000/admin/dashboard.php" class="h3_button">Administrador</a></h3>
+                <h3>Logomarca: <a href="http://localhost:8000/admin/gerenciar_conteudo.php" class="h3_button">Administrador</a></h3>
                     <figure>
                         <img src="img/logo3.png" alt="Logomarca">
                     </figure>
