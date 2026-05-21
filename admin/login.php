@@ -48,7 +48,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div class="botoes">
             <button class="button-primary" type="submit">Entrar</button>
-            <button class="button-secondary" type="button" onclick="window.location.href='../index.php'">Voltar</button>
+            <button class="button-secondary" type="button" onclick="window.location.href='../sobre.php'">Voltar</button>
         </div>
 
     </div>

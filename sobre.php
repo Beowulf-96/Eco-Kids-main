@@ -80,8 +80,11 @@
                 </div>
         </div>        
 
+        <div class="fundoWid">
+            <div class="footer"> 
+                <?php include 'footer.php'; ?>
+            </div>
+        </div>
     </body>
-    <?php
-    include 'footer.php';
-?>
 </html>
+

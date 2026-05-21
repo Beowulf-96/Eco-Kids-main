@@ -1,7 +1,7 @@
 <?php
     require_once 'Auth.php';
     require_once 'admin.php';
-    
+    include 'header.php';
     $auth = new Auth();
     $auth->verificar();
     
@@ -26,10 +26,14 @@
 
 <?php if ($msg) echo "<p>$msg</p>"; ?>
 
-<form method="post">
-    <label>Nome: </label><input type="text" name="nome" required><br>
-    <label>Email: </label><input type="email" name="email" required><br>
-    <label>Senha: </label><input type="password" name="senha" required><br>
-    <button type="submit">Salvar</button>
-</form>
-<a href="crud.php">Voltar</a>
+<div class="fundoWid">
+    <h3>Adicionar Administrador</h3>
+        <form method="post">
+            <label class="label">Nome: </label><input style="margin-left: 0.7vw;" type="text" name="nome" required><br>
+            <label class="label">Email: </label><input type="email" name="email" required><br>
+            <label class="label">Senha: </label><input type="password" name="senha" required><br><br>
+            <button class="button-primary" type="submit">Salvar</button>
+            <a class="button-secondary" href="crud.php">Voltar</a>
+        </form>
+        
+</div>

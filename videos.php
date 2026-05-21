@@ -19,12 +19,11 @@ $videoAtual = array_filter($videos, fn($v) => $v['id'] == $videoId)[0] ?? null;
             
             <div class="video-principal">
                 <h2 id="titulo-principal"><?= $videoAtual['titulo'] ?></h2>
-                    <video id="video-principal" controls autoplay>
-                        <source src="admin/<?= $videoAtual['caminho'] ?>" type="video/mp4">
+                    <video id="video-principal" controls autoplay src="admin/<?= $videoAtual['caminho'] ?>">
                     </video>
             </div>
-                <h4>Descrição:</h4>
-                <p id="descricao-principal"><?= $videoAtual['descricao'] ?></p>
+                <h5 class="video-descricao-h5">Descrição:</h5>
+                <p class="video-descricao" id="descricao-principal"><?= $videoAtual['descricao'] ?></p>
         </div>
 
 <div class="fundoWid">
@@ -36,12 +35,12 @@ $videoAtual = array_filter($videos, fn($v) => $v['id'] == $videoId)[0] ?? null;
                             <image src="admin/uploads/default.png" >
                         </a>
                     <?php else: ?>
-                        <a href="#"  class="video-item" onclick="trocarVideo('admin/<?= $video['caminho'] ?>', '<?= htmlspecialchars($video['titulo']) ?>', '<?= htmlspecialchars($video['descricao']) ?>'); return false;">
+                        <a href="#" class="video-item" onclick="trocarVideo('admin/<?= $video['caminho'] ?>', '<?= htmlspecialchars($video['titulo']) ?>', '<?= htmlspecialchars($video['descricao']) ?>'); return false;">
                             <image  src="admin/<?= $video['imagem'] ?>" >
                         </a>
                     <?php endif;?>
                     <div class="videoLateral">
-                        <h4><?= $video['titulo'] ?></h4> 
+                        <h5><?= $video['titulo'] ?></h5> 
                         <p><?= $video['descricao'] ?></p>
                     </div>
                 </div>    
@@ -51,19 +50,21 @@ $videoAtual = array_filter($videos, fn($v) => $v['id'] == $videoId)[0] ?? null;
 <script>
 function trocarVideo(caminho, titulo, descricao) {
     const video = document.getElementById('video-principal');
-    const tituloEl = document.getElementById('titulo-principal');
-    const descricaoEl = document.getElementById('descricao-principal');
-    
-    tituloEl.textContent = titulo;
-    descricaoEl.textContent = descricao;
+
     video.src = caminho;
-    video.load();
-    video.oncanplay = () => video.play();
+    video.play();
+
+    document.getElementById('titulo-principal').textContent = titulo;
+    document.getElementById('descricao-principal').textContent = descricao;
+
+    video.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 </script>
     
 <?php endif; ?>
 
-<?php
-    include 'footer.php';
-?>
+<div class="fundoWid">
+    <div class="footer"> 
+        <?php include 'footer.php'; ?>
+    </div>
+</div>

@@ -11,9 +11,9 @@
     $videos = $conn->query("SELECT * FROM conteudo WHERE tipo = 'video' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
     $primeiroVideo = $videos[0] ?? null;
 ?>
+
 <div class="fundoWid">
     <h3>Vídeos</h3>
-
     <?php if (empty($videos)): ?>
         <p>Nenhum vídeo disponível.</p>
     <?php else: ?>
@@ -27,28 +27,32 @@
     <?php endif; ?>
 </div>
 
+
+    <?php if(empty($leitura)): ?>
+        <div class="fundoWid">
+            <h3>Leitura</h3>
+                <p>Nenhum texto encontrado!</p>
+        </div>
+    <?php else: ?>
+        <div class="fundoWid">
+            <h3>Leitura</h3>
+        <div>
+            <h2><?= $primeiraLeitura['titulo'] ?></h2>
+    <?php if(!empty($primeiraLeitura['imagem'])): ?>
+        <img src="admin/<?= $primeiraLeitura['imagem']?>" alt="<?= $primeiraLeitura['titulo']?>" class="imagem-leitura">
+    <?php endif; ?>
+            <p><?= nl2br($primeiraLeitura['texto'])?></p>
+        </div>
+            <br>
+            <br>
+        <a href="curiosidades.php" class="more">Mais Leitura...</a>
+    <?php endif; ?>
+        </div>
+
 <div class="fundoWid">
-    <h3>Leitura</h3>
-        <?php if(empty($leitura)): ?>
-            <p>Nenhum texto encontrado!</p>
-            <?php else: ?>
-                <?php foreach($leitura as $item): ?>
-                    <div>
-                        <h2><?= $item['titulo'] ?></h2>
-
-                        <?php if(!empty($item['imagem'])): ?>
-                            <img src="admin/<?= $item['imagem']?>" alt="<?= $item['titulo']?>" class="imagem-leitura">
-                        <?php endif; ?>
-
-                        <p><?= nl2br($item['texto'])?></p>
-                    </div>
-                <?php endforeach; ?>
-                <br>
-                <br>
-            <a href="curiosidades.php" class="more">Mais Leitura...</a>
-        <?php endif; ?>
-    <?php include 'footer.php'; ?>
+    <div class="footer"> 
+        <?php include 'footer.php'; ?>
+    </div>
 </div>
-
 
 

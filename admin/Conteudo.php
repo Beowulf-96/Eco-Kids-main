@@ -65,7 +65,6 @@ class Conteudo {
         } else {
             $stmt = $this->conn->query("SELECT * FROM conteudo ORDER BY id DESC");
         }
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

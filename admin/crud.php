@@ -44,6 +44,6 @@
                 <?php endforeach; ?>
             </table>
     <a style="margin-top: 1%; margin-left: 1%;" class="button-3" href="adicionar_admin.php">Adicionar</a>
-    <a class="button-4" href="dashboard.php">Voltar</a>
+    <a class="button-4" href="logout.php">Logout</a>
 </div>
 

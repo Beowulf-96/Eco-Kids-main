@@ -1,7 +1,8 @@
 <?php
     require_once 'Auth.php';
     require_once 'admin.php';
-    
+    include 'header.php';
+    require_once 'Auth.php';
     $auth = new Auth();
     $auth->verificar();
     
@@ -39,10 +40,15 @@
 
 <?php if ($msg) echo "<p>$msg</p>"; ?>
 
-<form method="post">
-    <input type="hidden" name="id" value="<?php echo $info["id"]?>">
-    <label>Nome: </label><input type="text" name="nome" value="<?php echo $info["nome"]?>" required><br>
-    <label>Email: </label><input type="email" name="email" value="<?php echo $info["email"]?>" required><br>
-    <button type="submit">Editar</button>
-</form>
-<a href="crud.php">Voltar</a>
+<div class="fundoWid">
+    <h3>Editar Administrador</h3>
+        <form method="post">
+            <input type="hidden" name="id" value="<?php echo $info["id"]?>">
+            <label class="label">Nome: </label><input style="margin-left: 0.7vw;" type="text" name="nome" value="<?php echo $info["nome"]?>" required><br>
+            <label class="label">Email: </label><input type="email" name="email" value="<?php echo $info["email"]?>" required><br>
+            <label class="label">Senha: </label><input type="password" name="senha" value="<?php echo $info["senha"]?>" required><br><br>
+            <button class="button-primary" type="submit">Salvar</button>
+            <a class="button-secondary" href="crud.php">Voltar</a>
+        </form>
+        
+</div>

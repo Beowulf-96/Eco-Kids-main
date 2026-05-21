@@ -1,40 +1,30 @@
 <?php
-    include 'header.php';
+    require 'header.php';
     require_once __DIR__ . '/admin/conexao.php';
 
     $con = new Conexao();
     $conn = $con->conectar();
-    $jogos = $conn->query("SELECT * FROM conteudo WHERE tipo = 'jogo' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $jogos = $conn->query("SELECT id, titulo, tipo, descricao, imagem  FROM conteudo WHERE tipo = 'jogo' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="fundoWid"> 
-    <h3>Jogos</h3>
-        <div class="jogo-principal">
-            <?php if(empty($jogos)): ?>
-                <p>Nenhum jogo encontrado!</p>
-            <?php else: ?>
-                <?php foreach($jogos as $item): ?>
-                    <div class="jogo-item">
-                        <h2><?= htmlspecialchars($item['titulo'])?></h2>
-                        <img src="admin/<?= htmlspecialchars($item['imagem'] ?? '') ?>"
-                            class="imagem-jogo"
-                            onclick="rodarJogo('admin/<?= htmlspecialchars($item['caminho'] ?? '') ?>')"
-                            alt="<?= htmlspecialchars($item['titulo'] ?? '') ?>">
-                        <p><?= htmlspecialchars($item['descricao'] ?? '') ?></p>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif;?>
+<?php if(!$jogos): ?>
+    <div class="fundoWid">
+        <h3>Jogos</h3>
+        <p>Nenhum jogo encontrado!</p>
+    </div>
+<?php endif;?>
+
+<?php foreach($jogos as $item): ?>
+    <div class="fundoWid">
+        <h3><?= $item['titulo']?></h3>
+        <a class="video-item" onclick="acionarJogo('admin/<?=$item['caminho'] ?>');" >
+            <img src="admin/<?= $item['imagem'] ?>" >
+        </a>
+        <div class="videoLateral">
+            <h5><?= $item['titulo'] ?></h5> 
+            <p><?= $item['descricao'] ?></p>
         </div>
-</div>
+        
+    </div>
+<?php endforeach;?>
 
-<script>
-function rodarJogo(arquivoJogo) {
-    if (!arquivoJogo || arquivoJogo === 'admin/') {
-        alert('Arquivo do jogo não encontrado!');
-        return;
-    }
-    window.location.href = arquivoJogo;
-}
-</script>
-
-<?php include 'footer.php'; ?>
