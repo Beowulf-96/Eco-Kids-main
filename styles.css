@@ -522,6 +522,32 @@ table {
   padding: 5px;
 }
 
+.jogo {
+  display: flex;
+  gap: 2vw;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-inline: 5%;
+  margin-top: 3vw;
+  border-radius: 20px;
+  padding: 0.5vw 1vw;
+  align-items: flex-start; /* alinha topo */
+}
+
+.jogo img {
+  width: 20vw;
+  height: auto;
+  display: block;
+  border-radius: 0.5vw;
+}
+
+.jogoLateral{
+  flex: 1;
+  margin: 1vw 0 0;
+  font-size: 1.8vw;
+  margin-left: 1vw;
+}
+
 .footer {
   margin-top: 3vw;
   text-align: center;
