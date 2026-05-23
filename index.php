@@ -10,6 +10,9 @@
 
     $videos = $conn->query("SELECT * FROM conteudo WHERE tipo = 'video' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
     $primeiroVideo = $videos[0] ?? null;
+
+    $jogo = $conn->query("SELECT * FROM conteudo WHERE tipo = 'jogo' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $primeiroJogo = $jogo[0] ?? null;
 ?>
 
 <div class="fundoWid">
@@ -49,10 +52,35 @@
     <?php endif; ?>
         </div>
 
+    <?php if(empty($jogo)): ?>
+        <div class="fundoWid">
+            <h3>Jogos</h3>
+            <p>Nenhum jogo encontrado!</p>
+        </div>
+    <?php else: ?>
+        <div class="fundoWid">
+            <h3>Jogos</h3>
+                <h2><?= $primeiroJogo['titulo']?></h2>
+                    <a onclick="acionarJogo('admin/<?= $primeiroJogo['caminho']?>')">
+                        <img src="admin/<?= $primeiroJogo['imagem']?>" alt="<?= $primeiroJogo['titulo']?>" class="imagem-leitura">
+                    </a>
+                        <p><?= $primeiroJogo['descricao']?></p>
+                        <br>
+                        <br>
+                        <a href="games.php" class="more">Mais Jogos...</a>
+        </div>
+    <?php endif;?>
+
 <div class="fundoWid">
     <div class="footer"> 
         <?php include 'footer.php'; ?>
     </div>
 </div>
+
+<script>
+    function acionarJogo(caminho) {
+        window.location.href = caminho;
+    }
+</script>
 
 
