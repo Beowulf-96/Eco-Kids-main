@@ -548,6 +548,11 @@ table {
   margin-left: 1vw;
 }
 
+ul li a i {
+    font-size: 1.8vw;
+    margin-right: 5px;
+}
+
 .footer {
   margin-top: 3vw;
   text-align: center;

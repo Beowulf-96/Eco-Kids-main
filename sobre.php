@@ -57,28 +57,13 @@
                         <p>
                             <br>
                             Fundador: Raphael Isac Gomes Ferreira <br>
-                            Idade: 28 anos <br>
-                            Ocupação: Vendedor de peças para caminhões desde 2021 até o momento. <br>
+                            Idade: 29 anos <br>
                             Estudante de Análise e Desenvolvimento de Sistemas da Faculdade Senac. <br>
-                            Linkedin: <a href="https://www.linkedin.com/feed/?trk=onboarding-landing">https://www.linkedin.com/feed/?trk=onboarding-landing</a>
+                            Linkedin: <a href="https://www.linkedin.com/in/raphael-isac-490b69339/">https://www.linkedin.com/in/raphael-isac-490b69339/</a>
                         </p>
                     </div>
             </div>
-        </div>
-        <div class="fundoWid">    
-            <h3>CTO</h3>
-                <div class="rapha img">
-                    <img src="img/murilo.png" alt="Murilo">
-                        <div class="rapha">
-                            <p>
-                                Fundador: Murilo iochucki <br>
-                                Idade: 32 anos <br>
-                                Estudante de Análise e Desenvolvimento de Sistemas da Faculdade Senac. <br>
-                                Linkedin: <a href="//br.linkedin.com/in/murilo-iochucki-86869190">https://br.linkedin.com/in/murilo-iochucki-86869190</a>
-                            </p>
-                        </div>
-                </div>
-        </div>        
+        </div>    
 
         <div class="fundoWid">
             <div class="footer"> 
