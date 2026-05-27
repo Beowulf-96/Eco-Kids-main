@@ -7,6 +7,7 @@
         <title>EcoKids</title>
         <link rel="icon" href="img/logo3.png" type="image/x-icon">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     </head>
     <body>
     <header>
